@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IoT File Upload</title>
+    <link rel="stylesheet" href="style.css"> <!-- Linking external CSS file -->
+</head>
+<body>
+    <div class="container">
+        <h2>IoT File Upload</h2>
+       <form id="uploadForm">
+    <label for="fileInput" class="custom-file-upload">Select File</label>
+    <input type="file" id="fileInput" required>
+    <button type="submit">Upload</button>
+</form>
+<p id="message"></p>
+
+    </div>
+
+    <script>
+        document.getElementById("uploadForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            
+            let fileInput = document.getElementById("fileInput");
+            let message = document.getElementById("message");
+            
+            if (!fileInput.files.length) {
+                message.style.color = "red";
+                message.innerText = "Please select a file!";
+                return;
+            }
+            
+            let formData = new FormData();
+            formData.append("file", fileInput.files[0]);
+            
+            fetch("http://127.0.0.1:5000/upload", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message) {
+                    message.style.color = "green";
+                    message.innerText = data.message;
+                } else {
+                    message.style.color = "red";
+                    message.innerText = "Upload failed!";
+                }
+            })
+            .catch(error => {
+                message.style.color = "red";
+                message.innerText = "Upload failed! Error connecting to server.";
+            });
+        });
+    </script>
+</body>
+</html>
