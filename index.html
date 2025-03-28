@@ -20,39 +20,39 @@
 
     <script>
         document.getElementById("uploadForm").addEventListener("submit", function(event) {
-            event.preventDefault();
-            
-            let fileInput = document.getElementById("fileInput");
-            let message = document.getElementById("message");
-            
-            if (!fileInput.files.length) {
-                message.style.color = "red";
-                message.innerText = "Please select a file!";
-                return;
-            }
-            
-            let formData = new FormData();
-            formData.append("file", fileInput.files[0]);
-            
-            fetch("http://127.0.0.1:5000/upload", {
-                method: "POST",
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.message) {
-                    message.style.color = "green";
-                    message.innerText = data.message;
-                } else {
-                    message.style.color = "red";
-                    message.innerText = "Upload failed!";
-                }
-            })
-            .catch(error => {
-                message.style.color = "red";
-                message.innerText = "Upload failed! Error connecting to server.";
-            });
-        });
+    event.preventDefault();
+    
+    let fileInput = document.getElementById("fileInput");
+    let messageBox = document.getElementById("message");
+
+    if (!fileInput.files.length) {
+        messageBox.innerText = "Please select a file!";
+        return;
+    }
+    
+    let formData = new FormData();
+    formData.append("file", fileInput.files[0]);
+
+    fetch("http://127.0.0.1:5000/upload", {
+        method: "POST",
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.message.includes("successfully")) {
+            messageBox.style.color = "green";
+            messageBox.innerText = data.message;
+        } else {
+            messageBox.style.color = "red";
+            messageBox.innerText = "Error: " + data.message;
+        }
+    })
+    .catch(error => {
+        messageBox.style.color = "red";
+        messageBox.innerText = "Error connecting to server!";
+    });
+});
+
     </script>
 </body>
 </html>
