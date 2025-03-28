@@ -4,55 +4,61 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IoT File Upload</title>
-    <link rel="stylesheet" href="style.css"> <!-- Linking external CSS file -->
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <h2>IoT File Upload</h2>
-       <form id="uploadForm">
-    <label for="fileInput" class="custom-file-upload">Select File</label>
-    <input type="file" id="fileInput" required>
-    <button type="submit">Upload</button>
-</form>
-<p id="message"></p>
+        <h2>IoT File Upload System</h2>
+        
+        <!-- Custom File Input -->
+        <form id="uploadForm">
+            <label for="fileInput" class="file-label">Choose File</label>
+            <input type="file" id="fileInput" required>
+            <span id="fileName">No file selected</span>
+            
+            <!-- Upload Button -->
+            <button type="submit">Upload</button>
+        </form>
 
+        <!-- Message Display -->
+        <p id="message"></p>
     </div>
 
     <script>
+        // Display the selected file name
+        document.getElementById("fileInput").addEventListener("change", function() {
+            let fileName = this.files.length ? this.files[0].name : "No file selected";
+            document.getElementById("fileName").innerText = fileName;
+        });
+
+        // Handle file upload
         document.getElementById("uploadForm").addEventListener("submit", function(event) {
-    event.preventDefault();
-    
-    let fileInput = document.getElementById("fileInput");
-    let messageBox = document.getElementById("message");
+            event.preventDefault();
 
-    if (!fileInput.files.length) {
-        messageBox.innerText = "Please select a file!";
-        return;
-    }
-    
-    let formData = new FormData();
-    formData.append("file", fileInput.files[0]);
+            let fileInput = document.getElementById("fileInput");
+            if (!fileInput.files.length) {
+                alert("Please select a file!");
+                return;
+            }
 
-    fetch("http://127.0.0.1:5000/upload", {
-        method: "POST",
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.message.includes("successfully")) {
-            messageBox.style.color = "green";
-            messageBox.innerText = data.message;
-        } else {
-            messageBox.style.color = "red";
-            messageBox.innerText = "Error: " + data.message;
-        }
-    })
-    .catch(error => {
-        messageBox.style.color = "red";
-        messageBox.innerText = "Error connecting to server!";
-    });
-});
+            let formData = new FormData();
+            formData.append("file", fileInput.files[0]);
 
+            fetch("http://127.0.0.1:5000/upload", {
+                method: "POST",
+                body: formData,
+                cache: "no-cache"
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("message").innerText = data.message;
+                document.getElementById("fileName").innerText = "No file selected";
+                fileInput.value = "";
+            })
+            .catch(error => {
+                document.getElementById("message").innerText = "Upload failed!";
+            });
+        });
     </script>
 </body>
 </html>
