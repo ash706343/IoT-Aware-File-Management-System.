@@ -1,5 +1,5 @@
-# IoT-Aware File Management System
-A cloud-based file management system designed for IoT devices and users.  
+#File Management System
+A cloud-based file management system designed for  and users.  
 
 __________________________________________________________________________________________________________________________
 📖 Project Overview
